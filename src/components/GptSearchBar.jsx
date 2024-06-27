@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
-	const Dispatch=useDispatch();
+	const Dispatch = useDispatch();
 	const searchText = useRef(null);
 
 	const searchMovies = async (movie) => {
@@ -14,12 +14,11 @@ const GptSearchBar = () => {
 				movie +
 				"&include_adult=false&language=en-US&page=1",
 			Api_Options
-		); 
+		);
+
 		const json = await data.json();
-		console.log(json);
 		// return json.results.length > 0 ? [json.results[0]] : [];
 		return json.results;
-
 	};
 	const handleGptSearchClick = async () => {
 		const gptQuery =
@@ -30,15 +29,18 @@ const GptSearchBar = () => {
 			messages: [{ role: "user", content: gptQuery }],
 			model: "gpt-3.5-turbo",
 		});
-		const data = gptResult.choices?.[0]?.message.content
-			.split(",");
-			
-			const promiseArray=data.map((movie) => searchMovies(movie)); // give promise 
-			
+		const data = gptResult.choices?.[0]?.message.content.split(",");
+
+		const promiseArray = data.map((movie) => searchMovies(movie)); // give promise
 		const searchResult = await Promise.all(promiseArray);
 		console.log(searchResult);
 
-		Dispatch(addGptMovieResult({gptMovieResult:data, tmdbMovieResult:searchResult})); //tmdb_result , movie_name_suggested_by_ChatGPT 
+		Dispatch(
+			addGptMovieResult({
+				gptMovieResult: data,
+				tmdbMovieResult: searchResult,
+			})
+		); //tmdb_result , movie_name_suggested_by_ChatGPT
 	};
 	return (
 		<div className="pt-[5%] flex justify-center">
